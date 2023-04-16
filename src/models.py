@@ -7,46 +7,51 @@ from sqlalchemy import create_engine
 from eralchemy2 import render_er
 
 Base = declarative_base()
-    
+
 class User(Base):
-    __tablename__ = 'user'
-    id = Column (Integer, primary_key=True)
-    username = Column (String(50), nullable=False)
-    firstname = Column (String(50), nullable=False)
-    lastname = Column (String(50), nullable=False)
-    email = Column (String(200), nullable=False)
-
-class Follower(Base):
-    __tablename__ = 'followers'
+    __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
-    user_from_id = Column(Integer, ForeignKey('user.id'))
-    user_from = relationship(User)
-    user_to_id = Column(Integer, ForeignKey('user.id'))
-    user_to = relationship(User)
+    name = Column(String, nullable=False)
+    firstname = Column(String, nullable=False)
+    email = Column (String, nullable=False, unique=True)
+    password = Column (String(10))    
 
-class Post(Base):
-    __tablename__ = 'post'
+class Favorite(Base):
+    __tablename__ = 'favorites'
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey('user.id'))
-    user = relationship(User)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    element_id = Column (Integer, ForeignKey('elements.id'))
 
-class Comment(Base):
-    __tablename__ = 'comment'
+class Element (Base):
+    __tablename__ = 'elements'
     id = Column(Integer, primary_key=True)
-    comment_text = Column (String(400))
-    author_id = Column(Integer, ForeignKey('user.id'))
-    user = relationship(User)
-    post_id = Column(Integer, ForeignKey('post.id'))
-    post = relationship(Post)
+    name = Column(String, nullable=False)
+    description = Column (String)
 
-class Media(Base):
-    __tablename__ = 'media'
+class Planets(Base):
+    __tablename__ = 'planet'
     id = Column(Integer, primary_key=True)
-    type = Column(Integer)
-    url = Column (String)
-    post_id = Column(Integer, ForeignKey('post.id'))
-    post = relationship(Post)
+    element_id = Column (Integer, ForeignKey('elements.id'))
+    Terrain = Column(String)
+    Climate = Column(String)
+    Population = Column(Integer)
+    Orbital_period = Column(Integer)
+    Rotation_period = Column(Integer)
+    Diameter = Column(Integer)
 
+class Characters(Base):
+    __tablename__ = 'character'
+    id = Column(Integer, primary_key=True)
+    element_id = Column (Integer, ForeignKey('elements.id'))
+    Birth_Year = Column (Integer)
+    Gender = Column (String)
+    Height = Column (Integer)
+    Hair_color = Column (String)
+    Skin_color = Column (String)
+    Eye_color = Column (String)
+
+    def to_dict(self):
+        return {}
 
 ## Draw from SQLAlchemy base
 render_er(Base, 'diagram.png')
